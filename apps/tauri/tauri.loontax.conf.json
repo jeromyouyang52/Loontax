@@ -1,10 +1,19 @@
 {
   "productName": "LoonTax",
   "mainBinaryName": "LoonTax",
+  "version": "0.1.0",
   "identifier": "ca.loontax.desktop",
   "bundle": {
     "createUpdaterArtifacts": false,
-    "copyright": "LoonTax 2026, based on Wealthfolio © 2026 Teymz Inc. (AGPL-3.0)"
+    "copyright": "LoonTax 2026, based on Wealthfolio © 2026 Teymz Inc. (AGPL-3.0)",
+    "icon": [
+      "icons-loontax/icon.png",
+      "icons-loontax/32x32.png",
+      "icons-loontax/128x128.png",
+      "icons-loontax/128x128@2x.png",
+      "icons-loontax/icon.icns",
+      "icons-loontax/icon.ico"
+    ]
   },
   "plugins": {
     "updater": {

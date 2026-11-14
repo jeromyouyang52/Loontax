@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#14505A"/>
+      <stop offset="1" stop-color="#0B2A33"/>
+    </linearGradient>
+  </defs>
+  <rect x="32" y="32" width="960" height="960" rx="216" fill="url(#bg)"/>
+  <!-- the loon: body, neck and head in one silhouette, swimming right -->
+  <path fill="#F4F1E8" d="
+    M 196 610
+    C 236 520, 380 486, 520 500
+    C 586 506, 628 496, 650 460
+    C 662 420, 640 372, 646 330
+    C 652 278, 700 246, 752 252
+    C 790 256, 816 278, 826 304
+    L 900 326
+    L 826 340
+    C 818 368, 796 388, 770 400
+    C 744 440, 742 500, 760 548
+    C 772 588, 760 640, 712 664
+    C 640 700, 420 700, 300 676
+    C 250 666, 208 646, 196 610 Z"/>
+  <!-- red eye -->
+  <circle cx="760" cy="298" r="16" fill="#D7263D"/>
+  <!-- water -->
+  <path fill="none" stroke="#6FC2C0" stroke-width="30" stroke-linecap="round"
+        d="M 168 758 C 248 728, 328 728, 408 758 S 568 788, 648 758 S 808 728, 856 752"/>
+</svg>

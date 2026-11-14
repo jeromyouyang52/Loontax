@@ -1,4 +1,5 @@
 import { Icons } from "@wealthfolio/ui/components/ui/icons";
+import { CONNECT_ENABLED } from "@/lib/connect-config";
 import { Separator } from "@wealthfolio/ui/components/ui/separator";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -90,12 +91,16 @@ export default function SettingsLayout() {
       {
         title: t("settings:nav.sections.connections"),
         items: [
-          {
-            title: t("settings:nav.items.connect"),
-            href: "connect",
-            subtitle: t("settings:nav.subtitles.connect"),
-            icon: <Icons.CloudSync2 className="text-info size-6" />,
-          },
+          ...(CONNECT_ENABLED
+            ? [
+                {
+                  title: t("settings:nav.items.connect"),
+                  href: "connect",
+                  subtitle: t("settings:nav.subtitles.connect"),
+                  icon: <Icons.CloudSync2 className="text-info size-6" />,
+                },
+              ]
+            : []),
           {
             title: t("settings:nav.items.market_data"),
             href: "market-data",

@@ -83,7 +83,7 @@
     "buildFromScratch": "Build from scratch",
     "exampleWeights": "Example weights",
     "exampleDescription": "Use as a quantitative starting point, then review and edit the weights.",
-    "disclosure": "Example weights only. They are not recommendations, and Wealthfolio has not assessed whether they fit you."
+    "disclosure": "Example weights only. They are not recommendations, and LoonTax has not assessed whether they fit you."
   },
   "mode": {
     "enableSellsTip": "Allow reductions in this target's settings to use Rebalance."
@@ -218,9 +218,9 @@
     "externalCash": "Cash not yet recorded",
     "externalCashForAccount": "Cash not yet recorded in {{account}}",
     "failed": "The allocation preview could not be calculated.",
-    "firstUseDisclosure": "Wealthfolio can calculate adjustments from your target and the securities you mark as eligible, split in proportion to what you already hold. Every figure stays editable before you review it. It does not recommend investments or place trades.",
+    "firstUseDisclosure": "LoonTax can calculate adjustments from your target and the securities you mark as eligible, split in proportion to what you already hold. Every figure stays editable before you review it. It does not recommend investments or place trades.",
     "firstUseTitle": "How the rebalancing worksheet works",
-    "fullDisclosure": "Wealthfolio calculates adjustments from your target and the securities you marked as eligible, split in proportion to what you already hold, using your recorded holdings, prices, and exchange rates. Every line can be edited or removed. It does not choose investments, determine suitable changes, or execute transactions. Actual results may differ because prices can change and fees, taxes, and execution are not included.",
+    "fullDisclosure": "LoonTax calculates adjustments from your target and the securities you marked as eligible, split in proportion to what you already hold, using your recorded holdings, prices, and exchange rates. Every line can be edited or removed. It does not choose investments, determine suitable changes, or execute transactions. Actual results may differ because prices can change and fees, taxes, and execution are not included.",
     "fullyAllocated": "Fully allocated",
     "fundingLabel": "Funding left",
     "fundingLeft": "left after the worksheet, across the accounts you chose.",
@@ -278,7 +278,7 @@
     "resetToCalculated": "Reset to calculated adjustments",
     "retryPreview": "Retry preview",
     "reviewChanges": "Review adjustments",
-    "reviewDisclaimer": "Wealthfolio calculated these adjustments from your target, eligible securities, and allocation rule. Review and edit them before using the result. Nothing is submitted or executed.",
+    "reviewDisclaimer": "LoonTax calculated these adjustments from your target, eligible securities, and allocation rule. Review and edit them before using the result. Nothing is submitted or executed.",
     "reviewEmpty": "Enter an adjustment and place all of it in accounts to see the review by account.",
     "reviewHint": "Account-level adjustments resolved from the worksheet and your recorded data.",
     "reviewStale": "The last validated result remains visible while the preview updates.",

@@ -83,7 +83,7 @@
     "buildFromScratch": "Von Grund auf erstellen",
     "exampleWeights": "Beispielgewichte",
     "exampleDescription": "Als quantitativen Ausgangspunkt verwenden, dann die Gewichte prüfen und bearbeiten.",
-    "disclosure": "Nur Beispielgewichte. Sie sind keine Empfehlungen, und Wealthfolio hat nicht geprüft, ob sie zu Ihnen passen."
+    "disclosure": "Nur Beispielgewichte. Sie sind keine Empfehlungen, und LoonTax hat nicht geprüft, ob sie zu Ihnen passen."
   },
   "mode": {
     "enableSellsTip": "Erlauben Sie Reduzierungen in den Einstellungen dieses Ziels, um Rebalancing zu nutzen."
@@ -218,9 +218,9 @@
     "externalCash": "Noch nicht erfasstes Bargeld",
     "externalCashForAccount": "Noch nicht erfasstes Bargeld in {{account}}",
     "failed": "Die Allokationsvorschau konnte nicht berechnet werden.",
-    "firstUseDisclosure": "Wealthfolio kann Anpassungen aus Ihrem Ziel und den als geeignet markierten Wertpapieren berechnen, aufgeteilt im Verhältnis zu Ihren bestehenden Beständen. Jeder Wert bleibt vor Ihrer Prüfung bearbeitbar. Es empfiehlt keine Anlagen und platziert keine Aufträge.",
+    "firstUseDisclosure": "LoonTax kann Anpassungen aus Ihrem Ziel und den als geeignet markierten Wertpapieren berechnen, aufgeteilt im Verhältnis zu Ihren bestehenden Beständen. Jeder Wert bleibt vor Ihrer Prüfung bearbeitbar. Es empfiehlt keine Anlagen und platziert keine Aufträge.",
     "firstUseTitle": "So funktioniert das Rebalancing-Arbeitsblatt",
-    "fullDisclosure": "Wealthfolio berechnet Anpassungen aus Ihrem Ziel und den als geeignet markierten Wertpapieren, aufgeteilt im Verhältnis zu dem, was Sie bereits halten, auf Basis Ihrer erfassten Bestände, Preise und Wechselkurse. Jede Zeile kann bearbeitet oder entfernt werden. Es wählt keine Anlagen aus, bestimmt keine geeigneten Änderungen und führt keine Transaktionen aus. Tatsächliche Ergebnisse können abweichen, da sich Preise ändern können und Gebühren, Steuern und Ausführung nicht berücksichtigt sind.",
+    "fullDisclosure": "LoonTax berechnet Anpassungen aus Ihrem Ziel und den als geeignet markierten Wertpapieren, aufgeteilt im Verhältnis zu dem, was Sie bereits halten, auf Basis Ihrer erfassten Bestände, Preise und Wechselkurse. Jede Zeile kann bearbeitet oder entfernt werden. Es wählt keine Anlagen aus, bestimmt keine geeigneten Änderungen und führt keine Transaktionen aus. Tatsächliche Ergebnisse können abweichen, da sich Preise ändern können und Gebühren, Steuern und Ausführung nicht berücksichtigt sind.",
     "fullyAllocated": "Vollständig verteilt",
     "fundingLabel": "Verbleibende Finanzierung",
     "fundingLeft": "verbleiben nach dem Arbeitsblatt über die gewählten Konten.",
@@ -278,7 +278,7 @@
     "resetToCalculated": "Auf berechnete Anpassungen zurücksetzen",
     "retryPreview": "Vorschau erneut versuchen",
     "reviewChanges": "Anpassungen prüfen",
-    "reviewDisclaimer": "Wealthfolio hat diese Anpassungen aus Ihrem Ziel, den geeigneten Wertpapieren und der Verteilungsregel berechnet. Prüfen und bearbeiten Sie sie, bevor Sie das Ergebnis verwenden. Nichts wird übermittelt oder ausgeführt.",
+    "reviewDisclaimer": "LoonTax hat diese Anpassungen aus Ihrem Ziel, den geeigneten Wertpapieren und der Verteilungsregel berechnet. Prüfen und bearbeiten Sie sie, bevor Sie das Ergebnis verwenden. Nichts wird übermittelt oder ausgeführt.",
     "reviewEmpty": "Geben Sie eine Anpassung ein und verteilen Sie sie vollständig auf Konten, um die Übersicht nach Konto zu sehen.",
     "reviewHint": "Anpassungen je Konto, aufgelöst aus dem Arbeitsblatt und Ihren erfassten Daten.",
     "reviewStale": "Das letzte geprüfte Ergebnis bleibt sichtbar, während die Vorschau aktualisiert wird.",

@@ -186,5 +186,6 @@
     "holder": "Holder",
     "empty": "No capital gains or losses to report yet.",
     "export_failed": "The statement could not be exported."
-  }
+  },
+  "about_based_on": "LoonTax is built on Wealthfolio, open-source software by Teymz Inc. and contributors, licensed under the GNU Affero General Public License v3. LoonTax is under the same license; its full source code is on GitHub. Wealthfolio:"
 }

@@ -186,5 +186,6 @@
     "holder": "Titulaire",
     "empty": "Aucun gain ni aucune perte en capital à déclarer pour l'instant.",
     "export_failed": "Le relevé n'a pas pu être exporté."
-  }
+  },
+  "about_based_on": "LoonTax repose sur Wealthfolio, un logiciel libre de Teymz Inc. et de ses contributeurs, publié sous la licence publique générale GNU Affero v3. LoonTax est sous la même licence; son code source complet est sur GitHub. Wealthfolio :"
 }

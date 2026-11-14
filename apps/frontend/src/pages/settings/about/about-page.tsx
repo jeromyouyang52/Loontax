@@ -85,7 +85,7 @@ export default function AboutSettingsPage() {
             className="h-12 w-12 rounded-md shadow"
           />
           <div className="flex flex-col">
-            <CardTitle className="text-xl">Wealthfolio</CardTitle>
+            <CardTitle className="text-xl">LoonTax</CardTitle>
             <CardDescription>
               {t("settings:about_version", { version: version || "N/A" })}
             </CardDescription>
@@ -94,6 +94,12 @@ export default function AboutSettingsPage() {
         <CardContent className="space-y-6">
           <div className="space-y-4">
             <p className="text-muted-foreground text-sm">{t("settings:about_tagline")}</p>
+            <p className="text-muted-foreground text-xs">
+              {t("canada:about_based_on")}{" "}
+              <ExternalLink href="https://github.com/wealthfolio/wealthfolio" className="underline">
+                github.com/wealthfolio/wealthfolio
+              </ExternalLink>
+            </p>
             <div className="flex flex-wrap items-center gap-2">
               {!isMobile && (
                 <Button size="sm" onClick={handleCheckForUpdates} disabled={isCheckingUpdate}>
@@ -101,7 +107,7 @@ export default function AboutSettingsPage() {
                 </Button>
               )}
               <ExternalLink
-                href="https://wealthfolio.app"
+                href="https://github.com/jeromyouyang52/Loontax"
                 className={cn(
                   buttonVariants({ variant: "outline", size: "sm" }),
                   "inline-flex items-center gap-2",
@@ -121,7 +127,7 @@ export default function AboutSettingsPage() {
                 {t("settings:about_docs_button")}
               </ExternalLink>
               <ExternalLink
-                href="https://github.com/wealthfolio/wealthfolio"
+                href="https://github.com/jeromyouyang52/Loontax"
                 className={cn(
                   buttonVariants({ variant: "outline", size: "sm" }),
                   "inline-flex items-center gap-2",
@@ -193,23 +199,9 @@ export default function AboutSettingsPage() {
           <Separator />
 
           <div className="space-y-4">
-            <p className="text-muted-foreground text-sm">
-              {t("settings:about_support_message")}{" "}
-              <span className="font-mono font-semibold select-all">support@wealthfolio.app</span>
-            </p>
             <div className="flex flex-wrap items-center gap-2">
               <ExternalLink
-                href="mailto:support@wealthfolio.app"
-                className={cn(
-                  buttonVariants({ variant: "outline", size: "sm" }),
-                  "inline-flex items-center gap-2",
-                )}
-              >
-                <Icons.ExternalLink className="h-4 w-4" />
-                {t("settings:about_email_button")}
-              </ExternalLink>
-              <ExternalLink
-                href="https://github.com/wealthfolio/wealthfolio/issues"
+                href="https://github.com/jeromyouyang52/Loontax/issues"
                 className={cn(
                   buttonVariants({ variant: "outline", size: "sm" }),
                   "inline-flex items-center gap-2",
@@ -224,21 +216,7 @@ export default function AboutSettingsPage() {
 
             <p className="text-muted-foreground text-sm">
               <ExternalLink
-                href="https://wealthfolio.app/legal/privacy-policy"
-                className="hover:text-foreground underline underline-offset-4"
-              >
-                {t("settings:about_privacy_policy")}
-              </ExternalLink>
-              <span className="mx-2">•</span>
-              <ExternalLink
-                href="https://wealthfolio.app/legal/terms-of-use"
-                className="hover:text-foreground underline underline-offset-4"
-              >
-                {t("settings:about_terms_of_use")}
-              </ExternalLink>
-              <span className="mx-2">•</span>
-              <ExternalLink
-                href="https://wealthfolio.app"
+                href="https://github.com/jeromyouyang52/Loontax"
                 className="hover:text-foreground underline underline-offset-4"
               >
                 {t("settings:about_website_button")}

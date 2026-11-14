@@ -186,5 +186,6 @@
     "holder": "Titolare",
     "empty": "Ancora nessuna plusvalenza o minusvalenza da dichiarare.",
     "export_failed": "Non è stato possibile esportare il prospetto."
-  }
+  },
+  "about_based_on": "LoonTax si basa su Wealthfolio, software open source di Teymz Inc. e dei suoi collaboratori, distribuito con la GNU Affero General Public License v3. LoonTax usa la stessa licenza; il codice sorgente completo è su GitHub. Wealthfolio:"
 }

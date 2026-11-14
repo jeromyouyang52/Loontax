@@ -20,10 +20,10 @@ export function StartupScreen({ profile, message, error, children }: StartupScre
   const label =
     message ??
     (error
-      ? t("profiles.startupFailed", { defaultValue: "Couldn’t open Wealthfolio" })
+      ? t("profiles.startupFailed", { defaultValue: "Couldn’t open LoonTax" })
       : identity
         ? t("profiles.openingProfile", { name: identity.name, defaultValue: "Opening {{name}}…" })
-        : t("profiles.opening", { defaultValue: "Opening Wealthfolio…" }));
+        : t("profiles.opening", { defaultValue: "Opening LoonTax…" }));
   return (
     <main
       className={
@@ -48,7 +48,7 @@ export function StartupScreen({ profile, message, error, children }: StartupScre
       ) : (
         <img
           src="/logo-gold.png"
-          alt="Wealthfolio"
+          alt="LoonTax"
           className={`size-20 object-contain ${error ? "" : "splash-logo-pulse"}`}
         />
       )}

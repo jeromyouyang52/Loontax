@@ -87,7 +87,7 @@
     "buildFromScratch": "Crear desde cero",
     "exampleWeights": "Pesos de ejemplo",
     "exampleDescription": "Úsalos como punto de partida cuantitativo y luego revisa y edita los pesos.",
-    "disclosure": "Solo pesos de ejemplo. No son recomendaciones y Wealthfolio no ha evaluado si se ajustan a ti."
+    "disclosure": "Solo pesos de ejemplo. No son recomendaciones y LoonTax no ha evaluado si se ajustan a ti."
   },
   "mode": {
     "enableSellsTip": "Permite las reducciones en la configuración de este objetivo para usar «Reequilibrar»."
@@ -225,9 +225,9 @@
     "externalCash": "Efectivo aún no registrado",
     "externalCashForAccount": "Efectivo aún no registrado en {{account}}",
     "failed": "No se pudo calcular la vista previa de la asignación.",
-    "firstUseDisclosure": "Wealthfolio puede calcular ajustes a partir de tu objetivo y los valores que marques como elegibles, repartidos en proporción a lo que ya tienes. Cada cifra sigue siendo editable antes de revisarla. No recomienda inversiones ni envía órdenes.",
+    "firstUseDisclosure": "LoonTax puede calcular ajustes a partir de tu objetivo y los valores que marques como elegibles, repartidos en proporción a lo que ya tienes. Cada cifra sigue siendo editable antes de revisarla. No recomienda inversiones ni envía órdenes.",
     "firstUseTitle": "Cómo funciona la hoja de reequilibrio",
-    "fullDisclosure": "Wealthfolio calcula ajustes a partir de tu objetivo y los valores que marcaste como elegibles, repartidos en proporción a lo que ya tienes, usando tus posiciones, precios y tipos de cambio registrados. Cada línea se puede editar o eliminar. No elige inversiones, no determina qué cambios son adecuados ni ejecuta transacciones. Los resultados reales pueden diferir porque los precios pueden cambiar y no se incluyen comisiones, impuestos ni ejecución.",
+    "fullDisclosure": "LoonTax calcula ajustes a partir de tu objetivo y los valores que marcaste como elegibles, repartidos en proporción a lo que ya tienes, usando tus posiciones, precios y tipos de cambio registrados. Cada línea se puede editar o eliminar. No elige inversiones, no determina qué cambios son adecuados ni ejecuta transacciones. Los resultados reales pueden diferir porque los precios pueden cambiar y no se incluyen comisiones, impuestos ni ejecución.",
     "fullyAllocated": "Totalmente repartido",
     "fundingLabel": "Financiación restante",
     "fundingLeft": "restantes tras la hoja, en las cuentas elegidas.",
@@ -287,7 +287,7 @@
     "resetToCalculated": "Restablecer los ajustes calculados",
     "retryPreview": "Reintentar vista previa",
     "reviewChanges": "Revisar ajustes",
-    "reviewDisclaimer": "Wealthfolio calculó estos ajustes a partir de tu objetivo, los valores elegibles y la regla de reparto. Revísalos y edítalos antes de usar el resultado. No se envía ni se ejecuta nada.",
+    "reviewDisclaimer": "LoonTax calculó estos ajustes a partir de tu objetivo, los valores elegibles y la regla de reparto. Revísalos y edítalos antes de usar el resultado. No se envía ni se ejecuta nada.",
     "reviewEmpty": "Introduce un ajuste y colócalo por completo en cuentas para ver la revisión por cuenta.",
     "reviewHint": "Ajustes por cuenta resueltos a partir de la hoja y de tus datos registrados.",
     "reviewStale": "El último resultado validado sigue visible mientras se actualiza la vista previa.",

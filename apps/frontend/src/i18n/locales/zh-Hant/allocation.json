@@ -83,7 +83,7 @@
     "buildFromScratch": "從頭建立",
     "exampleWeights": "範例權重",
     "exampleDescription": "作為量化起點使用，之後再檢視並編輯權重。",
-    "disclosure": "僅為範例權重。這些不是建議，Wealthfolio 也未評估是否適合你。"
+    "disclosure": "僅為範例權重。這些不是建議，LoonTax 也未評估是否適合你。"
   },
   "mode": {
     "enableSellsTip": "請在此目標的設定中允許減少，才能使用「再平衡」。"
@@ -218,9 +218,9 @@
     "externalCash": "尚未記錄的現金",
     "externalCashForAccount": "{{account}} 中尚未記錄的現金",
     "failed": "無法計算配置預覽。",
-    "firstUseDisclosure": "Wealthfolio 可以根據您的目標和您標記為符合條件的證券，按您現有持有的比例計算調整額。在您檢閱之前，每個數字都可編輯。它不推薦投資，也不下單。",
+    "firstUseDisclosure": "LoonTax 可以根據您的目標和您標記為符合條件的證券，按您現有持有的比例計算調整額。在您檢閱之前，每個數字都可編輯。它不推薦投資，也不下單。",
     "firstUseTitle": "再平衡工作表如何運作",
-    "fullDisclosure": "Wealthfolio 使用您記錄的持有部位、價格和匯率，根據您的目標和您標記為符合條件的證券，按您現有持有的比例計算調整額。每一列都可以編輯或刪除。它不挑選投資、不判斷哪些變動合適，也不執行交易。由於價格可能變動，且未計入費用、稅費和執行情況，實際結果可能有所不同。",
+    "fullDisclosure": "LoonTax 使用您記錄的持有部位、價格和匯率，根據您的目標和您標記為符合條件的證券，按您現有持有的比例計算調整額。每一列都可以編輯或刪除。它不挑選投資、不判斷哪些變動合適，也不執行交易。由於價格可能變動，且未計入費用、稅費和執行情況，實際結果可能有所不同。",
     "fullyAllocated": "已全部分配",
     "fundingLabel": "剩餘資金",
     "fundingLeft": "在套用工作表後於所選帳戶中剩餘。",
@@ -278,7 +278,7 @@
     "resetToCalculated": "重設為計算出的調整額",
     "retryPreview": "重試預覽",
     "reviewChanges": "檢閱調整額",
-    "reviewDisclaimer": "Wealthfolio 根據您的目標、符合條件的證券和分配規則計算出這些調整額。使用結果前請檢閱並編輯。不會提交或執行任何操作。",
+    "reviewDisclaimer": "LoonTax 根據您的目標、符合條件的證券和分配規則計算出這些調整額。使用結果前請檢閱並編輯。不會提交或執行任何操作。",
     "reviewEmpty": "輸入調整額並將其全部放入帳戶，即可查看依帳戶的檢視。",
     "reviewHint": "根據工作表和您記錄的資料確定的各帳戶調整額。",
     "reviewStale": "預覽更新期間，上一次驗證的結果會保持顯示。",

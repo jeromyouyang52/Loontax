@@ -3,12 +3,13 @@
   "mainBinaryName": "LoonTax",
   "identifier": "ca.loontax.desktop",
   "bundle": {
-    "createUpdaterArtifacts": false
+    "createUpdaterArtifacts": false,
+    "copyright": "LoonTax 2026, based on Wealthfolio © 2026 Teymz Inc. (AGPL-3.0)"
   },
   "plugins": {
     "updater": {
       "endpoints": [
-        "https://github.com/jeromyouyang52/wealthfolio/releases/latest/download/latest.json"
+        "https://github.com/jeromyouyang52/Loontax/releases/latest/download/latest.json"
       ]
     }
   },

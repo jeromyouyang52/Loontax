@@ -186,5 +186,6 @@
     "holder": "持有人",
     "empty": "暂时没有需要申报的资本利得或亏损。",
     "export_failed": "报表导出失败。"
-  }
+  },
+  "about_based_on": "LoonTax 基于 Teymz Inc. 及其贡献者开发的开源软件 Wealthfolio，后者以 GNU Affero 通用公共许可证第 3 版发布。LoonTax 采用同一许可证，完整源代码公开在 GitHub 上。Wealthfolio："
 }

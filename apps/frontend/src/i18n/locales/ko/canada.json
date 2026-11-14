@@ -186,5 +186,6 @@
     "holder": "명의자",
     "empty": "아직 신고할 자본 손익이 없습니다.",
     "export_failed": "명세서를 내보낼 수 없습니다."
-  }
+  },
+  "about_based_on": "LoonTax는 Teymz Inc.와 기여자들이 만든 오픈 소스 소프트웨어 Wealthfolio(GNU Affero General Public License v3)를 기반으로 합니다. LoonTax도 같은 라이선스를 따르며 전체 소스 코드를 GitHub에 공개합니다. Wealthfolio:"
 }

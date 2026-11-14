@@ -186,5 +186,6 @@
     "holder": "名義人",
     "empty": "申告するキャピタルゲイン・ロスはまだありません。",
     "export_failed": "明細を書き出せませんでした。"
-  }
+  },
+  "about_based_on": "LoonTax は、Teymz Inc. とコントリビューターによるオープンソースソフトウェア Wealthfolio（GNU Affero General Public License v3）をもとにしています。LoonTax も同じライセンスで、完全なソースコードを GitHub で公開しています。Wealthfolio："
 }

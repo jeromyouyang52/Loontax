@@ -118,9 +118,7 @@ it.each([true, false])(
     mocks.isWeb = isWeb;
     mount();
     expect(await screen.findByText("Private portfolio")).toBeInTheDocument();
-    expect(
-      screen.queryByRole("heading", { name: "Who's using LoonTax?" }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Who's using LoonTax?" })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Profile menu for Personal" }));
     expect(await screen.findByRole("menuitem", { name: "Profile settings" })).toBeInTheDocument();
     expect(screen.getByRole("menuitem", { name: "Add profile" })).toBeInTheDocument();
@@ -313,9 +311,7 @@ it("does not show the chooser while the initial profile state is unresolved", as
   expect(screen.getByRole("status")).toHaveTextContent("Opening LoonTax");
   expect(screen.getByRole("status")).toHaveClass("sr-only");
   expect(screen.getByRole("img", { name: "LoonTax" })).toHaveAttribute("src", "/logo-gold.png");
-  expect(
-    screen.queryByRole("heading", { name: "Who's using LoonTax?" }),
-  ).not.toBeInTheDocument();
+  expect(screen.queryByRole("heading", { name: "Who's using LoonTax?" })).not.toBeInTheDocument();
   expect(screen.queryByText("Private portfolio")).not.toBeInTheDocument();
   await act(async () => pending.resolve(unlocked));
   expect(await screen.findByText("Private portfolio")).toBeInTheDocument();
@@ -359,9 +355,7 @@ it("keeps failed teardown covered and lets the user retry", async () => {
   expect(screen.queryByRole("button", { name: "Personal" })).not.toBeInTheDocument();
   mocks.command.mockResolvedValue({ ...unlocked, session: null });
   fireEvent.click(screen.getByRole("button", { name: "Retry" }));
-  expect(
-    await screen.findByRole("heading", { name: "Who's using LoonTax?" }),
-  ).toBeInTheDocument();
+  expect(await screen.findByRole("heading", { name: "Who's using LoonTax?" })).toBeInTheDocument();
 });
 it("opens an unprotected profile from the explicitly requested profile picker", async () => {
   mocks.command.mockResolvedValue({
@@ -372,9 +366,7 @@ it("opens an unprotected profile from the explicitly requested profile picker", 
   await screen.findByText("Private portfolio");
   mocks.command.mockResolvedValue({ ...unlocked, session: null });
   await menuAction("Switch profile");
-  expect(
-    await screen.findByRole("heading", { name: "Who's using LoonTax?" }),
-  ).toBeInTheDocument();
+  expect(await screen.findByRole("heading", { name: "Who's using LoonTax?" })).toBeInTheDocument();
   expect(mocks.reload).not.toHaveBeenCalled();
   fireEvent.click(screen.getByRole("button", { name: "Personal" }));
   await waitFor(() => expect(mocks.reload).toHaveBeenCalledWith({ dashboard: true }));
@@ -658,9 +650,7 @@ it("removes a password with current proof and reopens without a profile picker",
   );
   await waitFor(() => expect(mocks.reload).toHaveBeenCalledWith({ dashboard: false }));
   expect(mocks.command).toHaveBeenCalledWith("unlock_profile", { profileId: "a", proof: null });
-  expect(
-    screen.queryByRole("heading", { name: "Who's using LoonTax?" }),
-  ).not.toBeInTheDocument();
+  expect(screen.queryByRole("heading", { name: "Who's using LoonTax?" })).not.toBeInTheDocument();
 });
 
 it("deletes the last profile and returns to an empty profile picker", async () => {
@@ -1083,9 +1073,7 @@ it("keeps an expired profile closed after reconnect without issuing another lock
   mocks.command.mockResolvedValue({ ...protectedState, session: null });
   await act(async () => window.dispatchEvent(new Event("online")));
   expect(screen.queryByText("Private portfolio")).not.toBeInTheDocument();
-  expect(
-    await screen.findByRole("heading", { name: "Who's using LoonTax?" }),
-  ).toBeInTheDocument();
+  expect(await screen.findByRole("heading", { name: "Who's using LoonTax?" })).toBeInTheDocument();
   expect(mocks.command).not.toHaveBeenCalledWith("lock_profile", expect.anything());
 });
 
@@ -1177,9 +1165,7 @@ it.each([true, false])("adds a second profile directly from the menu (web: %s)",
   expect(screen.queryByText("Private portfolio")).not.toBeInTheDocument();
   expect(mocks.command).toHaveBeenCalledWith("lock_profile", { preserveAuth: false });
   expect(await screen.findByRole("heading", { name: "Create a profile" })).toBeInTheDocument();
-  expect(
-    screen.queryByRole("heading", { name: "Who's using LoonTax?" }),
-  ).not.toBeInTheDocument();
+  expect(screen.queryByRole("heading", { name: "Who's using LoonTax?" })).not.toBeInTheDocument();
 });
 it("does not open profile creation when closing the current profile fails", async () => {
   mount();

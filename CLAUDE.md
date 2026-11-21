@@ -33,8 +33,12 @@ harder. Prefer adding LoonTax code in the places above.
 - Engine first. Both shells use the same engine; fix a rule once.
 - Desktop app: maintenance only, no new features until the web report is
   validated.
-- Web report (planned): the engine compiled to WebAssembly, running in the
-  browser; trade files never leave the user's machine.
+- Web report (beta, live at https://loontax.vercel.app/try): the engine as
+  `engine.wasm`, running in the browser; trade files never leave the user's
+  machine. Reads Questrade (CSV or Excel), IBKR Activity Statement and Flex
+  Query CSVs. Page source, samples and its end-to-end test
+  (`tests/try.test.mjs`, CI `site-check.yml`) live on the `landing-site`
+  branch.
 - Presale validation until 2027-01-15: landing page at
   https://loontax.vercel.app (source: branch `landing-site`, Vercel project
   `loontax`; waitlist in Supabase project `loontax-waitlist`, ca-central-1).
@@ -65,8 +69,12 @@ Most rework so far came from calling something done without seeing it work.
   cargo with `RUSTUP_TOOLCHAIN=stable` locally; CI uses the pinned one.
 - The GitHub proxy refuses repository settings changes (visibility, etc.) and
   GraphQL; use `gh api` REST.
-- Vercel cannot read this repository through Git. Deploy the landing page with
-  files in the deployment request.
+- Vercel cannot read this repository through Git. A deploy sends three files
+  (`build.sh`, `vercel.json`, `api/ping.js`); `build.sh` downloads the
+  `landing-site` branch at a pinned commit from codeload.github.com into
+  `public/` and removes `tests/`, `.github/`, `README.md`. This only works while
+  the repository is public: once it is private, the founder connects the Vercel
+  project to the repository (Settings → Git) and pushes deploy instead.
 - The Windows installer cannot be built here; `loontax-windows.yml` builds it
   on a `loontax-v*` tag or by hand (~15 min). `loontax-check.yml` runs the fast
   checks on every push.

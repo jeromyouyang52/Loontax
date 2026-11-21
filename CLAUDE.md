@@ -72,7 +72,8 @@ Most rework so far came from calling something done without seeing it work.
 - Vercel cannot read this repository through Git. A deploy sends three files
   (`build.sh`, `vercel.json`, `api/ping.js`); `build.sh` downloads the
   `landing-site` branch at a pinned commit from codeload.github.com into
-  `public/` and removes `tests/`, `.github/`, `README.md`. This only works while
+  `public/` and removes `tests/`, `tools/`, `.github/`, `README.md`. Pages share `site.css`
+  (ink, ivory, brass; serif display): the look the founder approved on 2026-11-21. This only works while
   the repository is public: once it is private, the founder connects the Vercel
   project to the repository (Settings → Git) and pushes deploy instead.
 - The Windows installer cannot be built here; `loontax-windows.yml` builds it

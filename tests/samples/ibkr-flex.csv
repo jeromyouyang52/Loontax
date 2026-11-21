@@ -1,0 +1,3 @@
+"ClientAccountID","AssetClass","Symbol","TradeDate","Buy/Sell","Quantity","TradePrice","IBCommission","NetCash","CurrencyPrimary"
+"U1111111","STK","SHOP","20260629","BUY","4","150","-1","-601","CAD"
+"U1111111","OPT","SHOP 260918C00150000","20260630","SELL","-1","5","-1","499","CAD"

@@ -39,18 +39,107 @@
     var s = Math.abs(n).toFixed(8).replace(/\.?0+$/, '');
     return s === '' ? '0' : s;
   }
+  // Slash dates are M/D/Y or D/M/Y depending on the export's settings; each
+  // file is read one way, decided from all its dates (see slashOrder).
+  var slashOrder = 'MDY';
   function isoDate(v) {
     var s = String(v || '').trim();
-    var m = s.match(/^(\d{4})-?(\d{2})-?(\d{2})/);
+    var m = s.match(/^(\d{4})-?(\d{2})-?(\d{2})(?!\d)/);
     if (m) return m[1] + '-' + m[2] + '-' + m[3];
-    m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/); // Questrade's Excel round-trip: M/D/YYYY
-    if (m) return m[3] + '-' + ('0' + m[1]).slice(-2) + '-' + ('0' + m[2]).slice(-2);
+    if (/^\d{5}(\.\d+)?$/.test(s)) { // an Excel date serial (days since 1899-12-30)
+      var d = new Date(Date.UTC(1899, 11, 30) + Math.floor(Number(s)) * 864e5);
+      return d.toISOString().slice(0, 10);
+    }
+    m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})(?!\d)/);
+    if (m) {
+      var y = m[3].length === 2 ? '20' + m[3] : m[3];
+      var mo = slashOrder === 'DMY' ? m[2] : m[1], da = slashOrder === 'DMY' ? m[1] : m[2];
+      if (Number(mo) > 12) { var t = mo; mo = da; da = t; }
+      return y + '-' + ('0' + mo).slice(-2) + '-' + ('0' + da).slice(-2);
+    }
     return null;
+  }
+  // 'DMY' when some date's first number is over 12, 'MDY' when some second number is,
+  // 'AMBIGUOUS' when slash dates exist but none tells, null when there are none.
+  function slashOrderOf(rows) {
+    var seen = false, dmy = false, mdy = false;
+    rows.forEach(function (r) { r.forEach(function (c) {
+      var m = String(c).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})(?!\d)/);
+      if (!m) return; seen = true;
+      if (Number(m[1]) > 12) dmy = true; if (Number(m[2]) > 12) mdy = true;
+    }); });
+    if (!seen) return null;
+    return dmy && !mdy ? 'DMY' : mdy && !dmy ? 'MDY' : 'AMBIGUOUS';
   }
   function headerIndex(header) {
     var idx = {};
     header.forEach(function (h, i) { idx[String(h).trim().toLowerCase()] = i; });
     return function (name) { var i = idx[name.toLowerCase()]; return i == null ? -1 : i; };
+  }
+
+  // ---------- Excel (.xlsx): unzip with the browser's own inflater, read sheet 1 ----------
+  function u16(b, o) { return b[o] | (b[o + 1] << 8); }
+  function u32(b, o) { return (b[o] | (b[o + 1] << 8) | (b[o + 2] << 16) | (b[o + 3] << 24)) >>> 0; }
+  function unzip(buffer) {
+    var b = new Uint8Array(buffer), end = -1;
+    for (var i = b.length - 22; i >= Math.max(0, b.length - 65557); i--) if (u32(b, i) === 0x06054b50) { end = i; break; }
+    if (end < 0) return Promise.reject(new Error('不是 Excel 文件'));
+    var count = u16(b, end + 10), p = u32(b, end + 16), entries = {};
+    for (var n = 0; n < count; n++) {
+      if (u32(b, p) !== 0x02014b50) break;
+      var method = u16(b, p + 10), size = u32(b, p + 20), nameLen = u16(b, p + 28), extra = u16(b, p + 30), comment = u16(b, p + 32), local = u32(b, p + 42);
+      var name = new TextDecoder().decode(b.subarray(p + 46, p + 46 + nameLen));
+      entries[name] = { method: method, size: size, local: local };
+      p += 46 + nameLen + extra + comment;
+    }
+    return function read(name) {
+      var e = entries[name];
+      if (!e) return Promise.resolve(null);
+      var start = e.local + 30 + u16(b, e.local + 26) + u16(b, e.local + 28);
+      var data = b.subarray(start, start + e.size);
+      if (e.method === 0) return Promise.resolve(new TextDecoder().decode(data));
+      if (e.method !== 8 || typeof DecompressionStream === 'undefined') return Promise.reject(new Error('浏览器不支持解压'));
+      var stream = new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+      return new Response(stream).text();
+    };
+  }
+  function readXlsx(buffer) {
+    var read;
+    try { read = unzip(buffer); } catch (e) { return Promise.reject(e); }
+    if (typeof read !== 'function') return read;
+    return Promise.all([read('xl/sharedStrings.xml'), read('xl/workbook.xml'), read('xl/_rels/workbook.xml.rels')]).then(function (parts) {
+      var xml = function (t) { return new DOMParser().parseFromString(t, 'application/xml'); };
+      var shared = parts[0] ? Array.prototype.map.call(xml(parts[0]).getElementsByTagName('si'), function (si) {
+        return Array.prototype.map.call(si.getElementsByTagName('t'), function (t) { return t.textContent; }).join('');
+      }) : [];
+      var path = 'xl/worksheets/sheet1.xml';
+      if (parts[1] && parts[2]) {
+        var first = xml(parts[1]).getElementsByTagName('sheet')[0];
+        var rid = first && (first.getAttribute('r:id') || first.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'id'));
+        Array.prototype.forEach.call(xml(parts[2]).getElementsByTagName('Relationship'), function (r) {
+          if (r.getAttribute('Id') === rid) { var t = r.getAttribute('Target').replace(/^\//, ''); path = /^xl\//.test(t) ? t : 'xl/' + t; }
+        });
+      }
+      return read(path).then(function (sheet) {
+        if (!sheet) throw new Error('找不到工作表');
+        var rows = [];
+        Array.prototype.forEach.call(xml(sheet).getElementsByTagName('row'), function (row) {
+          var out = [];
+          Array.prototype.forEach.call(row.getElementsByTagName('c'), function (c) {
+            var ref = (c.getAttribute('r') || '').replace(/\d+$/, ''), col = 0;
+            for (var k = 0; k < ref.length; k++) col = col * 26 + ref.charCodeAt(k) - 64;
+            var type = c.getAttribute('t'), v = c.getElementsByTagName('v')[0], value = '';
+            if (type === 's') value = shared[Number(v && v.textContent)] || '';
+            else if (type === 'inlineStr') value = Array.prototype.map.call(c.getElementsByTagName('t'), function (t) { return t.textContent; }).join('');
+            else value = v ? v.textContent : '';
+            out[(col || out.length + 1) - 1] = value;
+          });
+          for (var j = 0; j < out.length; j++) if (out[j] == null) out[j] = '';
+          rows.push(out);
+        });
+        return rows;
+      });
+    });
   }
 
   // ---------- broker formats ----------
@@ -138,9 +227,16 @@
     return { activities: out, skipped: skipped, format: '通用格式' };
   }
 
-  function readFile(name, text) {
-    var rows = parseCSV(text);
+  function readRows(name, rows) {
+    rows = rows.filter(function (r) { return r.some(function (c) { return String(c).trim() !== ''; }); });
     if (!rows.length) return { error: '文件是空的' };
+    var order = slashOrderOf(rows);
+    if (order === 'AMBIGUOUS') return { error: '日期写成了“几/几/年”，而且每个日期的日和月都不超过 12，分不清哪个是月。请把导出的日期格式改成 年-月-日 后再试。' };
+    slashOrder = order || 'MDY';
+    var result = readByFormat(name, rows);
+    return result;
+  }
+  function readByFormat(name, rows) {
     if (rows.some(function (r) { return r[0] === 'Trades' && r[1] === 'Header'; })) return fromIbkrStatement(rows);
     var h = rows[0].map(function (x) { return String(x).trim().toLowerCase(); });
     var has = function (n) { return h.indexOf(n.toLowerCase()) >= 0; };
@@ -155,7 +251,10 @@
     var files = Array.prototype.slice.call(list || []);
     if (!files.length) return;
     Promise.all(files.map(function (f) {
-      return f.text().then(function (t) { var r = readFile(f.name, t); r.name = f.name; return r; });
+      var isXlsx = /\.xlsx$/i.test(f.name || '');
+      var read = isXlsx ? f.arrayBuffer().then(readXlsx) : f.text().then(parseCSV);
+      return read.then(function (rows) { var r = readRows(f.name, rows); r.name = f.name; return r; })
+        .catch(function (e) { return { name: f.name, error: isXlsx ? '这个 Excel 文件读不出来（' + (e && e.message || e) + '）。可以先另存为 CSV 再试。' : '文件读不出来。' }; });
     })).then(function (results) {
       state.files = state.files.concat(results);
       rebuild();

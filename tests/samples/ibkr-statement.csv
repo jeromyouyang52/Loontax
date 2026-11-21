@@ -1,0 +1,11 @@
+Statement,Header,Field Name,Field Value
+Statement,Data,Title,Activity Statement
+Account Information,Header,Field Name,Field Value
+Account Information,Data,Name,Test User
+Account Information,Data,Account,U7654321
+Trades,Header,DataDiscriminator,Asset Category,Currency,Symbol,Date/Time,Quantity,T. Price,C. Price,Proceeds,Comm/Fee,Basis,Realized P/L,MTM P/L,Code
+Trades,Data,Order,Stocks,USD,MSFT,"2026-06-30, 10:15:00",5,199.8,200,-999,-1,1000,0,0,O
+Trades,Data,Order,Stocks,USD,MSFT,"2026-07-01, 11:00:00",-5,180.2,180,901,-1,-1000,-100,0,C
+Trades,SubTotal,,Stocks,USD,MSFT,,0,,,-98,-2,,,
+Trades,Header,DataDiscriminator,Asset Category,Currency,Symbol,Date/Time,Quantity,T. Price,Proceeds,Comm/Fee,Code
+Trades,Data,Order,Forex,CAD,USD.CAD,"2026-06-29, 09:00:00",1000,1.42,-1420,-2,

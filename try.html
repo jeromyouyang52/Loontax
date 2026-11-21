@@ -290,14 +290,14 @@ td.pos{color:var(--mint)} td.neg{color:var(--rust)}
   <section class="glass panel" id="step-files">
     <div class="step-title"><span class="stepn">1</span><h2>选择文件</h2></div>
     <label class="drop" id="drop">
-      <input type="file" id="files" accept=".csv,text/csv" multiple>
-      <span class="drop-main">点击选择，或把 CSV 文件拖到这里</span>
+      <input type="file" id="files" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple>
+      <span class="drop-main">点击选择，或把 CSV / Excel 文件拖到这里</span>
       <span class="drop-sub">可以一次选多个文件（多个账户、多家券商）</span>
     </label>
     <details class="howto">
       <summary>怎么从券商导出？</summary>
       <div class="howto-grid">
-        <div><b>Questrade</b><p>网页版 → Reports → Account activity → 选好日期范围 → Export to Excel。打开后“另存为 CSV”。每个账户导出一次，或在一个文件里包含全部账户。</p></div>
+        <div><b>Questrade</b><p>网页版 → Reports → Account activity → 选好日期范围 → Export to Excel，直接上传导出的 Excel 文件即可。每个账户导出一次，或在一个文件里包含全部账户。</p></div>
         <div><b>Interactive Brokers</b><p>Performance &amp; Reports → Statements → Activity Statement，格式选 CSV，期间选整年。也支持 Flex Query 的 Trades 报表（CSV）。</p></div>
         <div><b>其他券商</b><p>用这个格式自己整理：<a href="#" id="sample">下载示例 CSV</a>。列：date, account, symbol, action (BUY/SELL), quantity, amount, currency。amount 为含佣金的买入成本或扣除佣金后的卖出所得。</p></div>
       </div>

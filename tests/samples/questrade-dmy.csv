@@ -1,0 +1,7 @@
+Transaction Date,Settlement Date,Action,Symbol,Description,Quantity,Price,Gross Amount,Commission,Net Amount,Currency,Account #,Activity Type,Account Type
+2/7/2026 12:00:00 AM,3/7/2026 12:00:00 AM,Sell,AAPL,APPLE INC,-10,220.1,2201,-1,2200,USD,51234567,Trades,Individual margin
+29/6/2026 12:00:00 AM,30/6/2026 12:00:00 AM,Buy,AAPL,APPLE INC,10,199.9,-1999,-1,-2000,USD,51234567,Trades,Individual margin
+20/3/2026 12:00:00 AM,21/3/2026 12:00:00 AM,Buy,XYZ,XYZ CORP,10,82,-820,0,-820,CAD,59990000,Trades,Individual TFSA
+15/3/2026 12:00:00 AM,15/3/2026 12:00:00 AM,DIV,XYZ,XYZ CORP DIVIDEND,0,0,0,0,5.2,CAD,51234567,Dividends,Individual margin
+10/3/2026 12:00:00 AM,11/3/2026 12:00:00 AM,Sell,XYZ,XYZ CORP,-10,80,800,0,800,CAD,51234567,Trades,Individual margin
+2/3/2026 12:00:00 AM,3/3/2026 12:00:00 AM,Buy,XYZ,XYZ CORP,10,100,-1000,0,-1000,CAD,51234567,Trades,Individual margin

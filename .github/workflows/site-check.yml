@@ -1,0 +1,24 @@
+name: Site check
+
+# The /try page end to end: real page, try.js and engine.wasm on sample broker
+# exports, figures checked against hand-computed values.
+on:
+  push:
+    branches: [landing-site]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  try-page:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm i --no-save --no-package-lock jsdom@24
+      - run: node tests/try.test.mjs

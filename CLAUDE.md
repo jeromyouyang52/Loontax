@@ -15,6 +15,7 @@ app, the planned web report and the landing page are shells around it.
 | Name you will see | What it is |
 | --- | --- |
 | `crates/canada-tax` (package `loontax-canada-tax`) | The engine. Pure calculation: rule table, ACB pool, superficial loss, year summary, FX fallback, contribution room. No I/O, no Wealthfolio dependency; must keep compiling to `wasm32-unknown-unknown` (CI checks it). Original code, owned by the founder. |
+| `crates/canada-tax-wasm` (package `loontax-canada-tax-wasm`) | The engine for the browser: JSON request in, JSON report out, three plain exports (`alloc`, `report`, `free`), no JS glue. CI builds `engine.wasm` and commits it to the `landing-site` branch, where `/try` loads it. |
 | `crates/canada-tax-service` (package `loontax-canada-tax-service`) | Glue between the engine and Wealthfolio: reads stored activities, fetches Bank of Canada rates, builds the reports. Desktop/server only. |
 | `crates/storage-sqlite/src/loontax_fx`, migrations `*_loontax_*` | Stored BoC rates and import templates. Never edit a shipped migration. |
 | `apps/frontend/src/features/canada/` | Tax pages (`/tax`, `/tax?view=room`, `/tax/statement`). |

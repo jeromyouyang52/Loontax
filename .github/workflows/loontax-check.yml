@@ -50,6 +50,27 @@ jobs:
       # compiling for WebAssembly; it does not run it there.
       - name: canada-tax builds for WebAssembly
         run: cargo build -p loontax-canada-tax --target wasm32-unknown-unknown --release --locked
+      - name: Browser engine tests and lint
+        run: |
+          cargo test -p loontax-canada-tax-wasm --locked
+          cargo clippy -p loontax-canada-tax-wasm --target wasm32-unknown-unknown --locked -- -D warnings
+      - name: Build the browser engine (engine.wasm)
+        env:
+          CARGO_PROFILE_RELEASE_OPT_LEVEL: "z"
+          CARGO_PROFILE_RELEASE_LTO: "true"
+          CARGO_PROFILE_RELEASE_CODEGEN_UNITS: "1"
+          CARGO_PROFILE_RELEASE_PANIC: "abort"
+        run: |
+          cargo build -p loontax-canada-tax-wasm --target wasm32-unknown-unknown --release --locked
+          cp target/wasm32-unknown-unknown/release/loontax_canada_tax_wasm.wasm engine.wasm
+          ls -l engine.wasm
+          # No imports: the page instantiates it with an empty import object.
+          node -e "const m=new WebAssembly.Module(require('fs').readFileSync('engine.wasm'));const i=WebAssembly.Module.imports(m);console.log('imports',JSON.stringify(i));console.log('exports',JSON.stringify(WebAssembly.Module.exports(m).map(e=>e.name)));if(i.length)process.exit(1)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: engine-wasm
+          path: engine.wasm
+          retention-days: 14
 
   boc-cors:
     name: Bank of Canada allows browser requests (information only)
@@ -68,3 +89,29 @@ jobs:
           else
             echo "::warning::No CORS header from Bank of Canada Valet: the web report needs a small proxy for rates."
           fi
+
+  publish-engine:
+    name: Put engine.wasm on the landing-site branch
+    needs: [engine]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: landing-site
+      - uses: actions/download-artifact@v4
+        with:
+          name: engine-wasm
+      - name: Commit if changed
+        run: |
+          if git diff --quiet --exit-code -- engine.wasm 2>/dev/null && git ls-files --error-unmatch engine.wasm >/dev/null 2>&1; then
+            echo "engine.wasm unchanged"; exit 0
+          fi
+          git config user.name "loontax-ci"
+          git config user.email "loontax-ci@users.noreply.github.com"
+          git add engine.wasm
+          git commit -m "engine.wasm from ${GITHUB_SHA::7}"
+          git push origin HEAD:landing-site

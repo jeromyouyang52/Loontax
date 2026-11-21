@@ -1,29 +1,9 @@
 name: Docker
 
+# LoonTax publishes no Docker image: automatic runs (tags, pull requests) are
+# off. Manual runs still build and test.
 on:
-  push:
-    tags: ["v*.*.*"]
-  # Manual runs (including existing tags) only build and test.
   workflow_dispatch:
-  pull_request:
-    paths:
-      - "apps/server/**"
-      - "crates/storage-sqlite/**"
-      - "crates/core/src/profiles/**"
-      - "crates/core/src/secrets/**"
-      - "crates/device-sync/**"
-      - "crates/connect/**"
-      - "crates/core/src/connect_config.rs"
-      - "config/**"
-      - "Cargo.toml"
-      - "Cargo.lock"
-      - "rust-toolchain.toml"
-      - "Dockerfile"
-      - ".dockerignore"
-      - ".github/scripts/**"
-      - ".github/workflows/docker-publish.yml"
-      - ".github/workflows/release.yml"
-
 permissions:
   contents: read
 

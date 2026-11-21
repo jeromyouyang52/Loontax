@@ -1,0 +1,70 @@
+name: LoonTax check
+
+# Fast checks for the LoonTax parts on every push and pull request (a few
+# minutes on Linux). The Windows installer is built separately by
+# loontax-windows.yml, on a loontax-v* tag or by hand.
+
+on:
+  push:
+    branches:
+      - main
+      - "loontax/**"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: loontax-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  translations:
+    name: Translations complete
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+      - name: Every locale translates canada.json
+        run: node scripts/loontax/check-i18n.mjs
+
+  engine:
+    name: Tax engine tests and browser build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      # rust-toolchain.toml pins the toolchain; add the target to that one.
+      - name: Rust toolchain and WebAssembly target
+        run: rustup show active-toolchain && rustup target add wasm32-unknown-unknown
+      - uses: swatinem/rust-cache@v2
+        with:
+          shared-key: loontax-engine
+      - name: canada-tax tests
+        run: cargo test -p loontax-canada-tax --locked
+      # The planned web report runs the engine in the browser. This keeps it
+      # compiling for WebAssembly; it does not run it there.
+      - name: canada-tax builds for WebAssembly
+        run: cargo build -p loontax-canada-tax --target wasm32-unknown-unknown --release --locked
+
+  boc-cors:
+    name: Bank of Canada allows browser requests (information only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    continue-on-error: true
+    steps:
+      - name: CORS headers on the Valet API
+        run: |
+          curl -sS -D - -o /dev/null \
+            -H "Origin: https://loontax.vercel.app" \
+            "https://www.bankofcanada.ca/valet/observations/FXUSDCAD/json?recent=1" \
+            | tee headers.txt
+          if grep -qi '^access-control-allow-origin' headers.txt; then
+            echo "::notice::Bank of Canada Valet sends CORS headers: the browser can fetch rates directly."
+          else
+            echo "::warning::No CORS header from Bank of Canada Valet: the web report needs a small proxy for rates."
+          fi

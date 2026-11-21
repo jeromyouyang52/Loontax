@@ -21,18 +21,10 @@ name: Warm Rust Cache
 # the package must stay public, or Docker builds compile every dependency.
 # Dockerfile changes also rewarm it.
 
+# LoonTax: no tag releases and no Docker images, so nothing restores these
+# caches. Automatic runs (push to main, weekly) are off; run it by hand if
+# release.yml or docker-publish.yml is ever used again.
 on:
-  push:
-    branches: [main]
-    paths:
-      - "Cargo.lock"
-      - "**/Cargo.toml"
-      - "rust-toolchain*"
-      - ".github/workflows/cache-warm.yml"
-      - "Dockerfile"
-      - ".dockerignore"
-  schedule:
-    - cron: "0 3 * * 1"
   workflow_dispatch:
 
 concurrency:

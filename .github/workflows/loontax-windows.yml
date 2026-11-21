@@ -1,7 +1,9 @@
 name: LoonTax Windows installer
 
-# Builds the LoonTax Windows installer (unsigned NSIS .exe) from main and the
-# LoonTax branches and keeps it as a workflow artifact. No tag, no release.
+# Builds the LoonTax Windows installer (unsigned NSIS .exe) and keeps it as a
+# workflow artifact. Runs on a loontax-v* tag or by hand, not on every push:
+# a build takes ~15 minutes of Windows runner time (billed double in a private
+# repo). loontax-check.yml runs the fast checks on every push.
 #
 # The build uses apps/tauri/tauri.loontax.conf.json: its own name and
 # identifier (its data folder is not Wealthfolio's), no updater artifacts,
@@ -9,9 +11,8 @@ name: LoonTax Windows installer
 
 on:
   push:
-    branches:
-      - main
-      - "loontax/**"
+    tags:
+      - "loontax-v*"
   workflow_dispatch:
 
 concurrency:

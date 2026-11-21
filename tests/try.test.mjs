@@ -12,10 +12,11 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const sample = (n) => join(root, 'tests/samples', n);
 const valet = readFileSync(sample('valet-usd.json'), 'utf8');
 
-async function run(names, { pick = 'NON_REGISTERED' } = {}) {
+async function run(names, { pick = 'NON_REGISTERED', today = '2026-11-21' } = {}) {
   const dom = new JSDOM(readFileSync(join(root, 'try.html'), 'utf8'), { runScripts: 'outside-only', url: 'https://loontax.test/try' });
   const w = dom.window;
   Object.assign(w, { WebAssembly, TextEncoder, TextDecoder, DecompressionStream, Response, Blob });
+  w.__LOONTAX_TODAY = today;
   w.HTMLElement.prototype.scrollIntoView = () => {};
   w.fetch = async (url) => {
     if (url === '/engine.wasm') { const b = readFileSync(join(root, 'engine.wasm')); return { ok: true, arrayBuffer: async () => b.buffer.slice(b.byteOffset, b.byteOffset + b.length) }; }
@@ -41,7 +42,16 @@ async function run(names, { pick = 'NON_REGISTERED' } = {}) {
   $('#run').click();
   await new Promise((r) => setTimeout(r, 1500));
   const cells = (sel) => [...w.document.querySelectorAll(sel + ' tbody tr')].map((tr) => [...tr.children].map((c) => c.textContent));
+  const harvest = async (symbol, price) => {
+    const tr = [...w.document.querySelectorAll('#harvest tbody tr')].find((t) => t.children[0].textContent === symbol);
+    const input = tr.querySelector('input[type=number]');
+    input.value = String(price);
+    input.dispatchEvent(new w.Event('input'));
+    await new Promise((r) => setTimeout(r, 50));
+    return { unrealized: tr.querySelector('.out-unreal').textContent, sim: tr.querySelector('.out-sim').textContent, picked: tr.querySelector('.pick input').checked };
+  };
   return {
+    harvest, deadline: () => $('#harvest-deadline').textContent, total: () => $('#harvest-total').textContent,
     fileLines, accounts, message: $('#run-msg').textContent,
     kpis: [...w.document.querySelectorAll('#kpis .kpi strong')].map((k) => k.textContent),
     sales: cells('#sales'), holdings: cells('#holdings'), issues: $('#issues').textContent,
@@ -82,6 +92,35 @@ await check('Day-first dates (29/6/2026) are read as day/month', async () => {
 await check('An account left without a type is reported, not guessed', async () => {
   const r = await run(['ibkr-flex.csv'], { pick: '' });
   assert.match(r.message, /没选类型/);
+});
+
+await check('Year-end check: selling SHOP at a loss today lowers the year', async () => {
+  const r = await run(['questrade.csv', 'ibkr-statement.csv', 'ibkr-flex.csv']);
+  assert.match(r.deadline(), /2026-12-30/);
+  assert.match(r.deadline(), /还有 39 天/);
+  const row = await r.harvest('SHOP', 100); // 4 x 100 = 400 CAD against an ACB of 601
+  assert.equal(row.unrealized, '−$201.00');
+  assert.match(row.sim, /可抵扣亏损 \$201\.00/);
+  assert.match(row.sim, /2026-12-22 之前不要/);
+  assert.equal(row.picked, true);
+  assert.match(r.total(), /净额变成 −\$64\.48/);   // 136.52 - 201.00
+  assert.match(r.total(), /计入收入的部分 −\$32\.24/);
+});
+
+await check('Year-end check: a TFSA purchase 11 days ago denies the loss', async () => {
+  const r = await run(['generic-tfsa.csv']);
+  const row = await r.harvest('ABC', 50); // 10 x 50 = 500 against 1000
+  assert.equal(row.unrealized, '−$500.00');
+  // 5 of the 10 units were rebought in the TFSA: half of the 500 loss is denied.
+  assert.match(row.sim, /亏损 \$250\.00 会被否认/);
+});
+
+await check('Year-end check: a USD holding uses the latest Bank of Canada rate', async () => {
+  const r = await run(['generic-usd.csv'], { today: '2026-07-06' });
+  // ACB 2000 x 1.4206 = 2841.20; 10 x 190 x 1.4201 (Jul 3, latest) = 2698.19
+  const row = await r.harvest('AAPL', 190);
+  assert.equal(row.unrealized, '−$143.01');
+  assert.match(row.sim, /可抵扣亏损 \$143\.01/);
 });
 
 if (failed) { console.log(`\n${failed} failed`); process.exit(1); }

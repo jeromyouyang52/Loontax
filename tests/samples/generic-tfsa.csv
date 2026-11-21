@@ -1,0 +1,3 @@
+date,account,account_type,symbol,action,quantity,amount,currency
+2026-01-10,My Margin,margin,ABC,BUY,10,1000,CAD
+2026-11-10,My TFSA,TFSA,ABC,BUY,5,300,CAD

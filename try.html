@@ -253,11 +253,31 @@ td.pos{color:var(--mint)} td.neg{color:var(--rust)}
 .issues{border-color:rgba(255,138,107,.4)}
 .cta-panel{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
 .cta-panel a{color:var(--mint)} .cta-panel .btn{color:#04110c}
+.harvest{border-color:rgba(95,227,177,.35)}
+.tag-new{font-size:12px;font-weight:700;color:#04110c;background:var(--mint);padding:3px 10px;border-radius:999px}
+.deadline{padding:10px 14px;border-radius:10px;background:rgba(233,196,124,.1);border:1px solid rgba(233,196,124,.35);color:#ecd9b0;font-size:14.5px;margin:4px 0 12px}
+.price-in{display:flex;align-items:center;gap:6px}
+.price-in input{width:110px;padding:8px 10px;border-radius:9px;border:1px solid var(--line2);background:rgba(0,0,0,.3);color:var(--text);font:inherit;font-size:14.5px}
+.price-in input:focus{outline:0;border-color:var(--mint)}
+#harvest-table{min-width:860px}
+#harvest-table td{vertical-align:middle}
+.pick input{width:18px;height:18px;accent-color:var(--mint)}
+.total{margin-top:14px;font-size:15px;line-height:1.9}
+span.neg{color:var(--rust)} span.pos{color:var(--mint)}
+@media(max-width:720px){
+  #harvest-table{min-width:0}
+  #harvest-table thead{display:none}
+  #harvest-table tr{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;padding:14px 0;border-bottom:1px solid var(--line)}
+  #harvest-table td{display:block;border:0;padding:0;text-align:start}
+  #harvest-table td::before{content:attr(data-l);display:block;font-size:12px;color:var(--dim);margin-bottom:2px}
+  #harvest-table td.out-sim{grid-column:1/-1}
+  #harvest-table td:empty{display:none}
+}
 [hidden]{display:none!important}
 .tool>*,.panel-plain>*{min-width:0}
 .tool section.panel-plain{padding:0}
 @media print{
-  .aurora,.grid-bg,nav,footer,#step-files,#step-accounts,.cta-panel,.row-actions,.years{display:none!important}
+  .aurora,.grid-bg,nav,footer,#step-files,#step-accounts,.cta-panel,.row-actions,.years,#harvest{display:none!important}
   body{background:#fff;color:#000}
   .glass,.kpi{background:#fff!important;border-color:#ccc!important;box-shadow:none!important;backdrop-filter:none!important}
   .mute,td,th{color:#000!important}
@@ -333,6 +353,14 @@ td.pos{color:var(--mint)} td.neg{color:var(--rust)}
       <div class="tablebox"><table id="holdings"><thead><tr><th>证券</th><th class="num">数量</th><th class="num">ACB 合计</th><th class="num">每股 ACB</th></tr></thead><tbody></tbody></table></div>
     </div>
     <div id="fx-notes" class="mute small"></div>
+    <div class="glass panel harvest" id="harvest" hidden>
+      <div class="panel-top"><h3>年底税损体检：今天卖出会怎样？</h3><span class="tag-new">跨券商 · 跨账户</span></div>
+      <p class="deadline" id="harvest-deadline"></p>
+      <p class="mute small">填上现价，LoonTax 用同一套规则算出“今天卖掉全部持仓”的结果：可抵扣多少亏损、会不会因为 30 天内买过（包括在 TFSA、RRSP 里买）而被否认、最早哪天才能买回。只算税，不建议你买卖哪只。</p>
+      <div class="tablebox"><table id="harvest-table"><thead><tr><th>证券</th><th class="num">数量</th><th class="num">ACB</th><th>现价</th><th class="num">浮盈 / 浮亏（加元）</th><th>今天卖出</th><th>计入合计</th></tr></thead><tbody></tbody></table></div>
+      <p class="total" id="harvest-total"></p>
+      <p class="mute small">按加拿大央行最新公布的汇率换算外币，未扣除卖出佣金。配偶账户只有导入了才会被检查。</p>
+    </div>
     <div class="glass panel cta-panel">
       <div><h3>这份报告对你有用吗？</h3><p class="mute">正式版 2027 年 2 月开放，加入候补名单锁定 $39 早鸟价。发现算错的地方，请用<a href="/contact?topic=question">联系表单</a>告诉我们。</p></div>
       <a class="btn" href="/#join">加入候补名单</a>

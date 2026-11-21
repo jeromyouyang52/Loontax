@@ -315,6 +315,11 @@
     ex.free(out, len + 4);
     return JSON.parse(json);
   }
+  function today() {
+    if (window.__LOONTAX_TODAY) return window.__LOONTAX_TODAY; // tests pin the date
+    var d = new Date();
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+  }
   function addDays(iso, n) { var d = new Date(iso + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
   function fetchRates(acts) {
     var byCur = {};
@@ -326,12 +331,28 @@
     var rates = {}, failed = [];
     return Promise.all(Object.keys(byCur).map(function (cur) {
       var r = byCur[cur];
-      var url = 'https://www.bankofcanada.ca/valet/observations/FX' + encodeURIComponent(cur) + 'CAD/json?start_date=' + addDays(r.min, -10) + '&end_date=' + r.max;
+      var url = 'https://www.bankofcanada.ca/valet/observations/FX' + encodeURIComponent(cur) + 'CAD/json?start_date=' + addDays(r.min, -10) + '&end_date=' + today();
       return fetch(url).then(function (res) { if (!res.ok) throw 0; return res.text(); })
         .then(function (t) { rates[cur] = t; }).catch(function () { failed.push(cur); });
     })).then(function () { return { rates: rates, failed: failed }; });
   }
 
+  // The engine request for the recorded trades plus any hypothetical sales today.
+  function buildRequest(acts, extra) {
+    var accounts = {};
+    Object.keys(state.accounts).forEach(function (k) { accounts[k] = { registration: state.accounts[k].registration }; });
+    var all = acts.concat(extra);
+    return {
+      asOf: today(),
+      accounts: accounts,
+      rates: state.fx ? state.fx.rates : {},
+      activities: all.map(function (a, i) {
+        var x = { id: a.id || String(i + 1), accountId: a.account, securityId: a.symbol, date: a.date, currency: a.currency, kind: a.kind, units: dec(a.units) };
+        if (a.kind === 'BUY') x.cost = dec(a.amount); else x.netProceeds = dec(a.amount);
+        return x;
+      })
+    };
+  }
   function run() {
     var msg = $('#run-msg');
     var missing = Object.keys(state.accounts).filter(function (k) { return !state.accounts[k].registration; });
@@ -339,24 +360,15 @@
     msg.textContent = '计算中…'; $('#run').disabled = true;
     var acts = state.activities.slice().sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : a.order - b.order; });
     Promise.all([engine(), fetchRates(acts)]).then(function (res) {
-      var ex = res[0], fx = res[1], accounts = {};
-      Object.keys(state.accounts).forEach(function (k) { accounts[k] = { registration: state.accounts[k].registration }; });
-      var request = {
-        asOf: new Date().toISOString().slice(0, 10),
-        accounts: accounts,
-        rates: fx.rates,
-        activities: acts.map(function (a, i) {
-          var x = { id: String(i + 1), accountId: a.account, securityId: a.symbol, date: a.date, currency: a.currency, kind: a.kind, units: dec(a.units) };
-          if (a.kind === 'BUY') x.cost = dec(a.amount); else x.netProceeds = dec(a.amount);
-          return x;
-        })
-      };
-      var report = callEngine(ex, request);
+      var ex = res[0], fx = res[1];
+      state.ex = ex; state.fx = fx; state.sorted = acts;
+      var report = callEngine(ex, buildRequest(acts, []));
       if (report.error) throw new Error(report.error);
       report.ratesFailed = fx.failed;
       state.report = report;
       state.year = report.years.length ? report.years[report.years.length - 1].year : null;
       render();
+      renderHarvest();
       msg.textContent = '';
       $('#step-report').hidden = false;
       $('#step-report').scrollIntoView({ behavior: 'smooth' });
@@ -408,6 +420,121 @@
     }).join('') || '<tr><td colspan="4" class="mute">没有。</td></tr>';
     $('#fx-notes').innerHTML = r.fxFallbacks.length ? '有 ' + r.fxFallbacks.length + ' 笔交易当天央行没有公布汇率（周末或假日），按之前最近一个工作日的汇率换算。' : '';
   }
+  // ---------- year-end tax-loss check ----------
+  // Every figure comes from the engine: each "what if I sell today" is the
+  // recorded history plus hypothetical sales dated today, so the superficial
+  // loss rule, pooling and FX work exactly as in the report.
+  function lastTradeDay(year) { // the sale must settle (T+1) by the last business day of the year
+    var d = new Date(Date.UTC(year, 11, 31));
+    var biz = function (x) { var w = x.getUTCDay(); return w !== 0 && w !== 6; };
+    while (!biz(d)) d.setUTCDate(d.getUTCDate() - 1);
+    do { d.setUTCDate(d.getUTCDate() - 1); } while (!biz(d));
+    return d.toISOString().slice(0, 10);
+  }
+  function latestRate(cur) {
+    if (cur === 'CAD') return 1;
+    try {
+      var obs = JSON.parse(state.fx.rates[cur]).observations, key = 'FX' + cur + 'CAD';
+      for (var i = obs.length - 1; i >= 0; i--) if (obs[i][key] && obs[i][key].v) return Number(obs[i][key].v);
+    } catch (_) {}
+    return null;
+  }
+  function holdingInfo(symbol) { // currency, and units per non-registered account, from the trades
+    var cur = 'CAD', per = {};
+    state.sorted.forEach(function (a) {
+      if (a.symbol !== symbol) return;
+      cur = a.currency;
+      if (state.accounts[a.account].registration !== 'NON_REGISTERED') return;
+      per[a.account] = (per[a.account] || 0) + (a.kind === 'BUY' ? a.units : -a.units);
+    });
+    return { currency: cur, accounts: per };
+  }
+  function hypotheticalSales(symbol, price) {
+    var info = holdingInfo(symbol), out = [];
+    Object.keys(info.accounts).forEach(function (acct, i) {
+      var units = info.accounts[acct];
+      if (units > 1e-9) out.push({ id: 'sim-' + symbol + '-' + i, account: acct, symbol: symbol, date: today(), currency: info.currency, kind: 'SELL', units: units, amount: units * price });
+    });
+    return out;
+  }
+  function simulate(sales) {
+    var report = callEngine(state.ex, buildRequest(state.sorted, sales));
+    if (report.error) throw new Error(report.error);
+    return report;
+  }
+  function yearOf(report, y) { return report.years.filter(function (x) { return x.year === y; })[0]; }
+
+  function renderHarvest() {
+    var box = $('#harvest');
+    var r = state.report, year = Number(today().slice(0, 4));
+    if (!r.holdings.length) { box.hidden = true; return; }
+    box.hidden = false;
+    var deadline = lastTradeDay(year);
+    var days = Math.round((Date.parse(deadline) - Date.parse(today())) / 864e5);
+    $('#harvest-deadline').innerHTML = days >= 0
+      ? '要算进 <b>' + year + '</b> 税年，卖出最晚在 <b>' + deadline + '</b> 下单（T+1 交收要在年内完成），还有 <b>' + days + '</b> 天。'
+      : year + ' 税年的卖出截止日（' + deadline + '）已过，今天卖出算 ' + (year + 1) + ' 税年。';
+    $('#harvest tbody').innerHTML = r.holdings.map(function (h, i) {
+      var info = holdingInfo(h.securityId);
+      return '<tr data-i="' + i + '"><td data-l="证券"><b>' + esc(h.securityId) + '</b></td><td class="num mono" data-l="数量">' + esc(h.units) + '</td><td class="num mono" data-l="ACB">' + money(h.acb) +
+        '</td><td data-l="现价"><div class="price-in"><input type="number" min="0" step="any" inputmode="decimal" aria-label="' + esc(h.securityId) + ' 现价" placeholder="现价"><span class="mute small">' + esc(info.currency) + '</span></div></td>' +
+        '<td class="num mono out-unreal" data-l="浮盈 / 浮亏"></td><td class="small out-sim" data-l="今天卖出"></td><td class="pick" data-l="计入合计"><input type="checkbox" aria-label="计入合计" disabled></td></tr>';
+    }).join('');
+    Array.prototype.forEach.call(document.querySelectorAll('#harvest tbody tr'), function (tr) {
+      tr.querySelector('input[type=number]').addEventListener('input', function () { updateRow(tr); updateTotal(); });
+      tr.querySelector('input[type=checkbox]').addEventListener('change', updateTotal);
+    });
+    updateTotal();
+  }
+  function updateRow(tr) {
+    var h = state.report.holdings[Number(tr.getAttribute('data-i'))];
+    var price = Number(tr.querySelector('input[type=number]').value), info = holdingInfo(h.securityId);
+    var pick = tr.querySelector('input[type=checkbox]');
+    var unreal = tr.querySelector('.out-unreal'), sim = tr.querySelector('.out-sim');
+    tr.removeAttribute('data-gain');
+    if (!(price > 0)) { unreal.textContent = ''; sim.textContent = ''; pick.checked = false; pick.disabled = true; return; }
+    var fx = latestRate(info.currency);
+    if (fx == null) { unreal.textContent = ''; sim.textContent = '缺少 ' + info.currency + ' 汇率'; pick.disabled = true; return; }
+    var gain = Number(h.units) * price * fx - Number(h.acb);
+    unreal.innerHTML = '<span class="' + (gain < 0 ? 'neg' : 'pos') + '">' + money(gain.toFixed(2)) + '</span>';
+    var sale, report;
+    try {
+      report = simulate(hypotheticalSales(h.securityId, price));
+      sale = report.dispositions.filter(function (d) { return d.date === today() && d.securityId === h.securityId; })[0];
+    } catch (e) { sim.textContent = '算不出来：' + e.message; pick.disabled = true; return; }
+    if (!sale) { sim.textContent = '算不出来：这只证券的记录有问题，见上方提示。'; pick.disabled = true; return; }
+    var back = addDays(today(), 31);
+    var lines = [];
+    if (Number(sale.deniedLoss) > 0) lines.push('<span class="neg">亏损 ' + money(sale.deniedLoss) + ' 会被否认</span>：过去 30 天内买过同一只证券（任何账户都算）。');
+    else if (Number(sale.gain) < 0) lines.push('可抵扣亏损 <b>' + money(Math.abs(Number(sale.gain)).toFixed(2)) + '</b>');
+    else lines.push('会实现利得 <b>' + money(sale.gain) + '</b>');
+    if (Number(sale.gain) <= 0) lines.push('卖出后 ' + back + ' 之前不要在任何账户（含 TFSA、RRSP、配偶账户）买回，否则亏损作废。');
+    sim.innerHTML = lines.join('<br>');
+    tr.setAttribute('data-gain', sale.gain);
+    pick.disabled = false;
+    if (!pick.dataset.touched) pick.checked = Number(sale.gain) < 0;
+  }
+  function updateTotal() {
+    Array.prototype.forEach.call(document.querySelectorAll('#harvest .pick input'), function (c) { c.onclick = function () { c.dataset.touched = '1'; }; });
+    var year = Number(today().slice(0, 4)), base = yearOf(state.report, year);
+    var rows = Array.prototype.filter.call(document.querySelectorAll('#harvest tbody tr'), function (tr) { return tr.querySelector('.pick input').checked; });
+    var baseNet = base ? Number(base.net) : 0, baseTax = base ? Number(base.taxable) : 0;
+    var html = '今年（' + year + '）已实现净额 <b class="mono">' + money(baseNet.toFixed(2)) + '</b>，计入收入的部分 <b class="mono">' + money(baseTax.toFixed(2)) + '</b>。';
+    if (rows.length) {
+      var sales = [];
+      rows.forEach(function (tr) {
+        var h = state.report.holdings[Number(tr.getAttribute('data-i'))];
+        sales = sales.concat(hypotheticalSales(h.securityId, Number(tr.querySelector('input[type=number]').value)));
+      });
+      try {
+        var after = yearOf(simulate(sales), year);
+        html += '<br>如果今天卖出勾选的 ' + rows.length + ' 只：净额变成 <b class="mono">' + money(after.net) + '</b>，计入收入的部分 <b class="mono">' + money(after.taxable) + '</b>' +
+          (Number(after.net) < 0 ? '（净亏损可以往前抵 3 年的利得，或者留到以后用）' : '') + '。';
+      } catch (e) { html += '<br>合计算不出来：' + esc(e.message); }
+    } else html += '<br>填上现价，勾选想卖的持仓，这里会算出卖出后的结果。';
+    $('#harvest-total').innerHTML = html;
+  }
+
   function downloadCSV() {
     var r = state.report; if (!r) return;
     var lines = [['date', 'security', 'units', 'proceeds_cad', 'acb_cad', 'outlays_cad', 'gain_cad', 'denied_superficial_loss_cad', 'notes']];

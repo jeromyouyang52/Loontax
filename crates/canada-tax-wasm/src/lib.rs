@@ -332,6 +332,10 @@ pub fn report_json(request: &str) -> String {
 }
 
 #[cfg(target_arch = "wasm32")]
+#[allow(
+    unsafe_code,
+    reason = "FFI: unmangled exports and the buffers the page passes in and out"
+)]
 mod exports {
     //! The browser calls these through the WebAssembly memory. Every buffer
     //! is a boxed byte slice (capacity equals length), handed back to `free`

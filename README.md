@@ -9,5 +9,7 @@ Static pages served at https://loontax.vercel.app (Vercel project `loontax`).
 - `tests/`: end-to-end test of /try (`npm i --no-save jsdom@24 && node tests/try.test.mjs`),
   run by `.github/workflows/site-check.yml`. Not deployed.
 
+- `tools/make_en.py`: rebuilds `en/index.html` from `index.html` (run from the branch root).
+
 Deploy: the Vercel build copies this branch into `public/` and removes
 `tests/`, `.github/` and `README.md`.
